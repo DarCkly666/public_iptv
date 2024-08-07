@@ -22,6 +22,15 @@ class MyApp extends StatelessWidget {
         colorScheme: MaterialTheme.darkScheme(),
         useMaterial3: true,
       ),
+      highContrastTheme: ThemeData(
+        colorScheme: MaterialTheme.lightHighContrastScheme(),
+        useMaterial3: true,
+      ),
+      highContrastDarkTheme: ThemeData(
+        colorScheme: MaterialTheme.darkHighContrastScheme(),
+        useMaterial3: true,
+      ),
+      themeMode: ThemeMode.system,
       home: const Root(),
     );
   }
