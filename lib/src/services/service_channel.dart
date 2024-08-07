@@ -2,9 +2,15 @@ import 'package:flutter/services.dart';
 import 'package:public_iptv/src/models/channel.dart';
 import 'package:public_iptv/src/models/stream.dart';
 import 'package:public_iptv/src/models/stream_channel.dart';
+import 'package:public_iptv/src/utils/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ServiceChannel {
   static Future<List<StreamChannel>> getStreamChannels() async {
+    List<StreamChannel> streamChannels = await getChannelsFromMem();
+    if (streamChannels.isNotEmpty) {
+      return streamChannels;
+    }
     String channelsString =
         await rootBundle.loadString('assets/data/channels.json');
     String streamsString =
@@ -17,7 +23,7 @@ class ServiceChannel {
       for (var stream in streams) stream.channel: stream
     };
 
-    List<StreamChannel> streamChannels = channels
+    streamChannels = channels
         .where((channel) => streamMap.containsKey(channel
             .id)) // Filtra solo los channels con streams correspondientes
         .map((channel) {
@@ -40,12 +46,32 @@ class ServiceChannel {
       );
     }).toList();
 
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String streamChannelsString = streamChannelToJson(streamChannels);
+    prefs.setString(Constants.keyStreamChannels, streamChannelsString);
+
     return streamChannels;
+  }
+
+  static Future<List<StreamChannel>> getChannelsFromMem() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? streamChannelsString =
+        prefs.getString(Constants.keyStreamChannels);
+    if (streamChannelsString != null) {
+      List<StreamChannel> streamChannels =
+          streamChannelFromJson(streamChannelsString);
+      return streamChannels;
+    } else {
+      return [];
+    }
   }
 
   static Future<List<StreamChannel>> getStreamChannelsByCategory(
       String category) async {
-    List<StreamChannel> streamChannels = await getStreamChannels();
+    List<StreamChannel> streamChannels = await getChannelsFromMem();
+    if (streamChannels.isEmpty) {
+      streamChannels = await getStreamChannels();
+    }
     return streamChannels
         .where((streamChannel) => streamChannel.categories.contains(category))
         .toList();
@@ -53,7 +79,10 @@ class ServiceChannel {
 
   static Future<List<StreamChannel>> getStreamChannelsByCountry(
       String country) async {
-    List<StreamChannel> streamChannels = await getStreamChannels();
+    List<StreamChannel> streamChannels = await getChannelsFromMem();
+    if (streamChannels.isEmpty) {
+      streamChannels = await getStreamChannels();
+    }
     return streamChannels
         .where((streamChannel) => streamChannel.country == country)
         .toList();
@@ -61,7 +90,10 @@ class ServiceChannel {
 
   static Future<List<StreamChannel>> getStreamChannelsByLanguage(
       String languageCode) async {
-    List<StreamChannel> streamChannels = await getStreamChannels();
+    List<StreamChannel> streamChannels = await getChannelsFromMem();
+    if (streamChannels.isEmpty) {
+      streamChannels = await getStreamChannels();
+    }
     return streamChannels
         .where(
             (streamChannel) => streamChannel.languages.contains(languageCode))

@@ -73,7 +73,7 @@ class _RootState extends State<Root> {
         Navigator.pop(context);
       },
       selected: _currentPage == page,
-      selectedTileColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+      selectedTileColor: Theme.of(context).colorScheme.primary.withOpacity(0.3),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(50),
       ),

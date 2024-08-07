@@ -15,27 +15,31 @@ class PageLanguages extends StatelessWidget {
           if (snapshot.hasData) {
             List<Language> languages = snapshot.data as List<Language>;
             languages.sort((a, b) => a.name.compareTo(b.name));
-            return ListView.builder(
-              itemCount: languages.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  leading: CircleAvatar(
-                    child: Text(languages[index].name.characters.first,
-                        style: const TextStyle(fontSize: 24)),
-                  ),
-                  title: Text(languages[index].name),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PageChannelsBy(
-                                  option: ChannelOption.channelsByLanguage,
-                                  title: languages[index].name,
-                                  variant: languages[index].code,
-                                )));
-                  },
-                );
-              },
+            return Scrollbar(
+              child: ListView.builder(
+                itemCount: languages.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        child: Text(languages[index].name.characters.first,
+                            style: const TextStyle(fontSize: 24)),
+                      ),
+                      title: Text(languages[index].name),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PageChannelsBy(
+                                      option: ChannelOption.channelsByLanguage,
+                                      title: languages[index].name,
+                                      variant: languages[index].code,
+                                    )));
+                      },
+                    ),
+                  );
+                },
+              ),
             );
           } else if (snapshot.hasError) {
             return const Center(child: Text('Error'));

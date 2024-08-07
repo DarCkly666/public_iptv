@@ -14,27 +14,31 @@ class PageCategories extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final categories = snapshot.data as List<Category>;
-            return ListView.builder(
-              itemCount: categories.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  leading: CircleAvatar(
-                    child: Text(categories[index].name.characters.first,
-                        style: const TextStyle(fontSize: 24)),
-                  ),
-                  title: Text(categories[index].name),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PageChannelsBy(
-                                  option: ChannelOption.channelsByCategory,
-                                  title: categories[index].name,
-                                  variant: categories[index].id,
-                                )));
-                  },
-                );
-              },
+            return Scrollbar(
+              child: ListView.builder(
+                itemCount: categories.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        child: Text(categories[index].name.characters.first,
+                            style: const TextStyle(fontSize: 24)),
+                      ),
+                      title: Text(categories[index].name),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PageChannelsBy(
+                                      option: ChannelOption.channelsByCategory,
+                                      title: categories[index].name,
+                                      variant: categories[index].id,
+                                    )));
+                      },
+                    ),
+                  );
+                },
+              ),
             );
           } else if (snapshot.hasError) {
             return const Center(child: Text('Error'));

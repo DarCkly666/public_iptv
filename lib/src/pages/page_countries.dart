@@ -14,26 +14,30 @@ class PageCountries extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final countries = snapshot.data as List<Country>;
-            return ListView.builder(
-              itemCount: countries.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  leading: Text(countries[index].flag,
-                      style: const TextStyle(fontSize: 24)),
-                  title: Text(
-                      '${countries[index].name} (${countries[index].code})'),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PageChannelsBy(
-                                  option: ChannelOption.channelsByCountry,
-                                  title: countries[index].name,
-                                  variant: countries[index].code,
-                                )));
-                  },
-                );
-              },
+            return Scrollbar(
+              child: ListView.builder(
+                itemCount: countries.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    child: ListTile(
+                      leading: Text(countries[index].flag,
+                          style: const TextStyle(fontSize: 24)),
+                      title: Text(
+                          '${countries[index].name} (${countries[index].code})'),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PageChannelsBy(
+                                      option: ChannelOption.channelsByCountry,
+                                      title: countries[index].name,
+                                      variant: countries[index].code,
+                                    )));
+                      },
+                    ),
+                  );
+                },
+              ),
             );
           } else if (snapshot.hasError) {
             return const Center(child: Text('Error'));

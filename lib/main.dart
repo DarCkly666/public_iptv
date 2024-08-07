@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:public_iptv/src/pages/root.dart';
+import 'package:public_iptv/src/pages/splash_screen.dart';
 import 'package:public_iptv/theme.dart';
 
 void main() {
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       themeMode: ThemeMode.system,
-      home: const Root(),
+      home: const SplashScreen(),
     );
   }
 }
