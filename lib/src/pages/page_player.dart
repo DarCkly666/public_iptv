@@ -5,7 +5,8 @@ import 'package:public_iptv/src/models/stream_channel.dart';
 
 class PagePlayer extends StatefulWidget {
   final StreamChannel channel;
-  const PagePlayer({super.key, required this.channel});
+  final List<StreamChannel> channels;
+  const PagePlayer({super.key, required this.channel, required this.channels});
 
   @override
   State<PagePlayer> createState() => _PagePlayerState();
@@ -13,8 +14,10 @@ class PagePlayer extends StatefulWidget {
 
 class _PagePlayerState extends State<PagePlayer> {
   late BetterPlayerController _betterPlayerController;
+  StreamChannel? _currentChannel;
 
   void initPlayer() {
+    _currentChannel = widget.channel;
     BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
       widget.channel.url,
@@ -23,10 +26,11 @@ class _PagePlayerState extends State<PagePlayer> {
         const BetterPlayerConfiguration(
           autoPlay: true,
           controlsConfiguration: BetterPlayerControlsConfiguration(
-            enableSkips: false,
-            enableOverflowMenu: false,
-            enableProgressBar: false,
+            enableSkips: true,
+            enableOverflowMenu: true,
+            enableProgressBar: true,
           ),
+          allowedScreenSleep: false,
           aspectRatio: 16 / 9,
           fit: BoxFit.contain,
           deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp],
@@ -59,11 +63,56 @@ class _PagePlayerState extends State<PagePlayer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
-      height: double.infinity,
-      width: double.infinity,
-      color: Colors.black,
-      child: _aspectRatio(),
+        body: SafeArea(
+      child: Column(
+        children: [
+          _aspectRatio(),
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black54,
+                  blurRadius: 4.0,
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back_rounded),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                SizedBox(
+                  height: 24.0,
+                  width: 24.0,
+                  child: AspectRatio(
+                    aspectRatio: 1 / 1,
+                    child: Image.network(
+                      _currentChannel?.logo ?? '',
+                      height: 20.0,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8.0),
+                Expanded(
+                  child: Text(
+                    _currentChannel?.name ?? 'No channel selected',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 20),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(child: _showChannels()),
+        ],
+      ),
     ));
   }
 
@@ -73,6 +122,40 @@ class _PagePlayerState extends State<PagePlayer> {
       child: BetterPlayer(
         controller: _betterPlayerController,
       ),
+    );
+  }
+
+  _showChannels() {
+    return ListView.separated(
+      separatorBuilder: (context, index) => const Divider(),
+      itemCount: widget.channels.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          leading: AspectRatio(
+            aspectRatio: 1 / 1,
+            child: Image.network(
+              widget.channels[index].logo,
+              fit: BoxFit.contain,
+            ),
+          ),
+          title: Text(
+            widget.channels[index].name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          onTap: () {
+            _betterPlayerController.setupDataSource(
+              BetterPlayerDataSource(
+                BetterPlayerDataSourceType.network,
+                widget.channels[index].url,
+              ),
+            );
+            setState(() {
+              _currentChannel = widget.channels[index];
+            });
+          },
+        );
+      },
     );
   }
 }

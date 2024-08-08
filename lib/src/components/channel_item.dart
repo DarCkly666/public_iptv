@@ -4,9 +4,11 @@ import 'package:public_iptv/src/pages/page_player.dart';
 
 class ChannelItem extends StatelessWidget {
   final StreamChannel channel;
+  final List<StreamChannel> channels;
   const ChannelItem({
     super.key,
     required this.channel,
+    required this.channels,
   });
 
   @override
@@ -26,7 +28,7 @@ class ChannelItem extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
         subtitle: Text(
-          channel.categories.join(', '),
+          channel.languages.join(', '),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -36,6 +38,7 @@ class ChannelItem extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => PagePlayer(
                   channel: channel,
+                  channels: channels,
                 ),
               ));
         },

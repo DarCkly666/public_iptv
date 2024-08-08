@@ -62,7 +62,10 @@ class _PageChannelsByState extends State<PageChannelsBy> {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   itemCount: channels.length,
                   itemBuilder: (context, index) {
-                    return ChannelItem(channel: channels[index]);
+                    return ChannelItem(
+                      channel: channels[index],
+                      channels: channels,
+                    );
                   },
                 ),
               );

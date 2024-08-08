@@ -38,6 +38,7 @@ dependencies:
   better_player: 0.0.84
   shared_preferences: 2.3.1
   draggable_scrollbar: 0.1.0
+  keep_screen_on: 3.0.0
 
 dev_dependencies:
   flutter_test:

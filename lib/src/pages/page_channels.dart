@@ -42,7 +42,10 @@ class _PageChannelsState extends State<PageChannels> {
                 controller: _semicircleController,
                 itemCount: channels.length,
                 itemBuilder: (context, index) {
-                  return ChannelItem(channel: channels[index]);
+                  return ChannelItem(
+                    channel: channels[index],
+                    channels: channels,
+                  );
                 },
               ),
             );
