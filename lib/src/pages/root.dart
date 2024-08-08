@@ -30,17 +30,14 @@ class _RootState extends State<Root> {
         scrolledUnderElevation: 0.0,
         forceMaterialTransparency: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: IndexedStack(
-          index: _pages.indexOf(_currentPage),
-          children: const <Widget>[
-            PageCountries(),
-            PageCategories(),
-            PageLanguages(),
-            PageChannels(),
-          ],
-        ),
+      body: IndexedStack(
+        index: _pages.indexOf(_currentPage),
+        children: const <Widget>[
+          PageCountries(),
+          PageCategories(),
+          PageLanguages(),
+          PageChannels(),
+        ],
       ),
       drawer: Drawer(
         child: ListView(
