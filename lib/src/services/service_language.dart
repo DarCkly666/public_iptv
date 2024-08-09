@@ -7,4 +7,13 @@ class ServiceLanguage {
     List<Language> languages = languageFromJson(response);
     return languages;
   }
+
+  static Future<List<Language>> getLanguagesByLetter(String letter) async {
+    List<Language> languages = await getLanguages();
+    final languageByLetter = languages
+        .where((language) => language.name.startsWith(letter))
+        .toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
+    return languageByLetter;
+  }
 }

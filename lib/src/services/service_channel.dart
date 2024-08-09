@@ -100,6 +100,18 @@ class ServiceChannel {
         .toList();
   }
 
+  static Future<List<StreamChannel>> getStreamChannelsByName(
+      String name) async {
+    List<StreamChannel> streamChannels = await getChannelsFromMem();
+    if (streamChannels.isEmpty) {
+      streamChannels = await getStreamChannels();
+    }
+    return streamChannels
+        .where((streamChannel) =>
+            streamChannel.name.toLowerCase().contains(name.toLowerCase()))
+        .toList();
+  }
+
   /*static Future<List<Channel>> getChannels() async {
     String response = await rootBundle.loadString('assets/data/channels.json');
     List<Channel> channels = channelFromJson(response);

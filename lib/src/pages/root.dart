@@ -52,7 +52,7 @@ class _RootState extends State<Root> {
             _drawerItem('Countries', Icons.public, 'countries'),
             _drawerItem('Categories', Icons.category, 'categories'),
             _drawerItem('Languages', Icons.language, 'languages'),
-            _drawerItem('All', Icons.live_tv_rounded, 'all'),
+            _drawerItem('Search', Icons.search_rounded, 'all'),
           ],
         ),
       ),

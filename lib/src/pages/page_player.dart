@@ -1,6 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:keep_screen_on/keep_screen_on.dart';
 import 'package:public_iptv/src/models/stream_channel.dart';
 
 class PagePlayer extends StatefulWidget {
@@ -26,9 +27,13 @@ class _PagePlayerState extends State<PagePlayer> {
         const BetterPlayerConfiguration(
           autoPlay: true,
           controlsConfiguration: BetterPlayerControlsConfiguration(
-            enableSkips: true,
-            enableOverflowMenu: true,
+            enableSkips: false,
+            enableFullscreen: true,
+            playerTheme: BetterPlayerTheme.cupertino,
+            enableOverflowMenu: false,
             enableProgressBar: true,
+            enableProgressBarDrag: false,
+            liveTextColor: Colors.red,
           ),
           allowedScreenSleep: false,
           aspectRatio: 16 / 9,
@@ -42,6 +47,15 @@ class _PagePlayerState extends State<PagePlayer> {
           fullScreenAspectRatio: 16 / 9,
         ),
         betterPlayerDataSource: betterPlayerDataSource);
+    _betterPlayerController.addEventsListener((event) {
+      if (event.betterPlayerEventType == BetterPlayerEventType.play) {
+        KeepScreenOn.turnOn();
+        _betterPlayerController.seekTo(
+            _betterPlayerController.videoPlayerController!.value.position);
+      } else if (event.betterPlayerEventType == BetterPlayerEventType.pause) {
+        KeepScreenOn.turnOff();
+      }
+    });
   }
 
   void disposePlayer() {
