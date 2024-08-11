@@ -1,4 +1,3 @@
-import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:flutter/material.dart';
 import 'package:public_iptv/src/components/channel_item.dart';
 import 'package:public_iptv/src/models/channel_option.dart';
@@ -20,7 +19,7 @@ class PageChannelsBy extends StatefulWidget {
 }
 
 class _PageChannelsByState extends State<PageChannelsBy> {
-  final ScrollController _semicircleController = ScrollController();
+  final ScrollController _controller = ScrollController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,26 +38,18 @@ class _PageChannelsByState extends State<PageChannelsBy> {
               if (channels.isEmpty) {
                 return const Center(child: Text('No channels'));
               }
-              return DraggableScrollbar.semicircle(
-                controller: _semicircleController,
-                labelTextBuilder: (offset) {
-                  final int currentItem = _semicircleController.hasClients
-                      ? (_semicircleController.offset /
-                              _semicircleController.position.maxScrollExtent *
-                              channels.length)
-                          .floor()
-                      : 0;
-
-                  return Text(
-                    channels[currentItem].name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  );
-                },
-                labelConstraints:
-                    const BoxConstraints.tightFor(width: 150.0, height: 30.0),
-                child: ListView.builder(
-                  controller: _semicircleController,
+              return Scrollbar(
+                controller: _controller,
+                interactive: true,
+                thickness: 8.0,
+                radius: const Radius.circular(8.0),
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 6,
+                    mainAxisExtent: 150,
+                  ),
+                  controller: _controller,
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   itemCount: channels.length,
                   itemBuilder: (context, index) {

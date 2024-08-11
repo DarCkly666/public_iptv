@@ -3,6 +3,7 @@ import 'package:public_iptv/src/pages/page_categories.dart';
 import 'package:public_iptv/src/pages/page_channels.dart';
 import 'package:public_iptv/src/pages/page_countries.dart';
 import 'package:public_iptv/src/pages/page_languages.dart';
+import 'package:public_iptv/src/utils/constants.dart';
 
 class Root extends StatefulWidget {
   const Root({super.key});
@@ -24,7 +25,7 @@ class _RootState extends State<Root> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Public IPTV'),
+        title: const Text(Constants.appName),
         centerTitle: true,
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0.0,

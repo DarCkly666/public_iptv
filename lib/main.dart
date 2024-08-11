@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Public IPTV',
+      title: 'Abigail',
       theme: ThemeData(
         colorScheme: MaterialTheme.lightScheme(),
         useMaterial3: true,

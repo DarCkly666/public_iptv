@@ -1,4 +1,3 @@
-import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:flutter/material.dart';
 import 'package:public_iptv/src/components/channel_item.dart';
 import 'package:public_iptv/src/models/stream_channel.dart';
@@ -12,7 +11,7 @@ class PageChannels extends StatefulWidget {
 }
 
 class _PageChannelsState extends State<PageChannels> {
-  final ScrollController _semicircleController = ScrollController();
+  final ScrollController _controller = ScrollController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _channelController = TextEditingController();
   List<StreamChannel> _channels = [];
@@ -79,11 +78,14 @@ class _PageChannelsState extends State<PageChannels> {
         Expanded(
           child: loading
               ? const Center(child: CircularProgressIndicator())
-              : DraggableScrollbar.semicircle(
-                  controller: _semicircleController,
+              : Scrollbar(
+                  controller: _controller,
+                  interactive: true,
+                  thickness: 8.0,
+                  radius: const Radius.circular(8.0),
                   child: ListView.builder(
                     padding: const EdgeInsets.all(8.0),
-                    controller: _semicircleController,
+                    controller: _controller,
                     itemCount: _channels.length,
                     itemBuilder: (context, index) {
                       return ChannelItem(

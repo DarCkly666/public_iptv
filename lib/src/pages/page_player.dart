@@ -16,6 +16,8 @@ class PagePlayer extends StatefulWidget {
 class _PagePlayerState extends State<PagePlayer> {
   late BetterPlayerController _betterPlayerController;
   StreamChannel? _currentChannel;
+  String _currentId = "";
+  final ScrollController _scrollController = ScrollController();
 
   void initPlayer() {
     _currentChannel = widget.channel;
@@ -30,7 +32,7 @@ class _PagePlayerState extends State<PagePlayer> {
             enableSkips: false,
             enableFullscreen: true,
             playerTheme: BetterPlayerTheme.cupertino,
-            enableOverflowMenu: false,
+            enableOverflowMenu: true,
             enableProgressBar: true,
             enableProgressBarDrag: false,
             liveTextColor: Colors.red,
@@ -66,6 +68,7 @@ class _PagePlayerState extends State<PagePlayer> {
   void initState() {
     super.initState();
     initPlayer();
+    _currentId = widget.channel.id;
   }
 
   @override
@@ -124,7 +127,7 @@ class _PagePlayerState extends State<PagePlayer> {
               ],
             ),
           ),
-          Expanded(child: _showChannels()),
+          Expanded(child: _showChannels(controller: _scrollController)),
         ],
       ),
     ));
@@ -139,37 +142,63 @@ class _PagePlayerState extends State<PagePlayer> {
     );
   }
 
-  _showChannels() {
-    return ListView.separated(
-      separatorBuilder: (context, index) => const Divider(),
-      itemCount: widget.channels.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          leading: AspectRatio(
-            aspectRatio: 1 / 1,
-            child: Image.network(
-              widget.channels[index].logo,
-              fit: BoxFit.contain,
-            ),
-          ),
-          title: Text(
-            widget.channels[index].name,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          onTap: () {
-            _betterPlayerController.setupDataSource(
-              BetterPlayerDataSource(
-                BetterPlayerDataSourceType.network,
-                widget.channels[index].url,
+  _showChannels({controller}) {
+    return Scrollbar(
+      interactive: true,
+      thickness: 8.0,
+      radius: const Radius.circular(8.0),
+      controller: controller,
+      child: ListView.builder(
+        controller: controller,
+        itemCount: widget.channels.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            leading: AspectRatio(
+              aspectRatio: 1 / 1,
+              child: FadeInImage(
+                image: NetworkImage(
+                  widget.channels[index].logo,
+                ),
+                fit: BoxFit.contain,
+                placeholder: const AssetImage('assets/images/logo.png'),
+                imageErrorBuilder: (context, error, stackTrace) => Image.asset(
+                  'assets/images/logo.png',
+                  fit: BoxFit.contain,
+                ),
               ),
-            );
-            setState(() {
-              _currentChannel = widget.channels[index];
-            });
-          },
-        );
-      },
+            ),
+            title: Text(
+              widget.channels[index].name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            subtitle: Text(
+              '${widget.channels[index].categories.join(', ')} - ${widget.channels[index].country}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            selected: _currentId == widget.channels[index].id,
+            selectedColor: Theme.of(context).colorScheme.surface,
+            selectedTileColor:
+                Theme.of(context).colorScheme.primary.withOpacity(0.7),
+            onTap: () {
+              if (_currentId == widget.channels[index].id) {
+                return;
+              }
+              _betterPlayerController.setupDataSource(
+                BetterPlayerDataSource(
+                  BetterPlayerDataSourceType.network,
+                  widget.channels[index].url,
+                ),
+              );
+              setState(() {
+                _currentChannel = widget.channels[index];
+                _currentId = widget.channels[index].id;
+              });
+            },
+          );
+        },
+      ),
     );
   }
 }

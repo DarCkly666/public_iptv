@@ -1,4 +1,3 @@
-import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:flutter/material.dart';
 import 'package:public_iptv/src/models/channel_option.dart';
 import 'package:public_iptv/src/models/language.dart';
@@ -15,6 +14,7 @@ class PageLanguages extends StatelessWidget {
 
     return Scaffold(
       body: GridView.builder(
+        padding: const EdgeInsets.all(8.0),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 4, // Ajusta según tu diseño
           mainAxisSpacing: 8,
@@ -58,7 +58,7 @@ class PageLanguagesByLetter extends StatefulWidget {
 }
 
 class _PageLanguagesByLetterState extends State<PageLanguagesByLetter> {
-  final ScrollController _semicircleController = ScrollController();
+  final ScrollController _controller = ScrollController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,10 +81,14 @@ class _PageLanguagesByLetterState extends State<PageLanguagesByLetter> {
           }
 
           List<Language> languages = snapshot.data!;
-          return DraggableScrollbar.semicircle(
-            controller: _semicircleController,
+          return Scrollbar(
+            controller: _controller,
+            interactive: true,
+            thickness: 8.0,
+            radius: const Radius.circular(8.0),
             child: ListView.builder(
-              controller: _semicircleController,
+              padding: const EdgeInsets.all(8.0),
+              controller: _controller,
               itemCount: languages.length,
               itemBuilder: (context, index) {
                 return ListTile(
