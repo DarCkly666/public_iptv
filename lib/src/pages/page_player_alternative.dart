@@ -90,6 +90,7 @@ class _PagePlayerAlternativeState extends State<PagePlayerAlternative> {
     return Scaffold(
         body: SafeArea(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           _aspectRatio(),
           Container(
@@ -176,7 +177,7 @@ class _PagePlayerAlternativeState extends State<PagePlayerAlternative> {
               ],
             ),
           ),
-          Expanded(child: _showChannels(controller: _scrollController)),
+          _showChannels(controller: _scrollController),
         ],
       ),
     ));
@@ -213,57 +214,60 @@ class _PagePlayerAlternativeState extends State<PagePlayerAlternative> {
   }
 
   _showChannels({controller}) {
-    return Scrollbar(
-      interactive: true,
-      thickness: 8.0,
-      radius: const Radius.circular(8.0),
-      controller: controller,
-      child: ListView.builder(
+    return Expanded(
+      child: Scrollbar(
+        interactive: true,
+        thickness: 8.0,
+        radius: const Radius.circular(8.0),
         controller: controller,
-        itemCount: widget.channels.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            leading: AspectRatio(
-              aspectRatio: 1 / 1,
-              child: FadeInImage(
-                image: NetworkImage(
-                  widget.channels[index].logo,
-                ),
-                fit: BoxFit.contain,
-                placeholder: const AssetImage('assets/images/logo.png'),
-                imageErrorBuilder: (context, error, stackTrace) => Image.asset(
-                  'assets/images/logo.png',
+        child: ListView.builder(
+          controller: controller,
+          itemCount: widget.channels.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              leading: AspectRatio(
+                aspectRatio: 1 / 1,
+                child: FadeInImage(
+                  image: NetworkImage(
+                    widget.channels[index].logo,
+                  ),
                   fit: BoxFit.contain,
+                  placeholder: const AssetImage('assets/images/logo.png'),
+                  imageErrorBuilder: (context, error, stackTrace) =>
+                      Image.asset(
+                    'assets/images/logo.png',
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
-            ),
-            title: Text(
-              widget.channels[index].name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            subtitle: Text(
-              '${widget.channels[index].categories.join(', ')} - ${widget.channels[index].country}',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            selected: _currentId == widget.channels[index].id,
-            selectedColor: Theme.of(context).colorScheme.surface,
-            selectedTileColor:
-                Theme.of(context).colorScheme.primary.withOpacity(0.7),
-            onTap: () async {
-              if (_currentId == widget.channels[index].id) {
-                return;
-              }
-              setState(() {
-                _currentChannel = widget.channels[index];
-                _currentId = widget.channels[index].id;
-              });
-              disposePlayer();
-              await initPlayer(widget.channels[index].url);
-            },
-          );
-        },
+              title: Text(
+                widget.channels[index].name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              subtitle: Text(
+                '${widget.channels[index].categories.join(', ')} - ${widget.channels[index].country}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              selected: _currentId == widget.channels[index].id,
+              selectedColor: Theme.of(context).colorScheme.surface,
+              selectedTileColor:
+                  Theme.of(context).colorScheme.primary.withOpacity(0.7),
+              onTap: () async {
+                if (_currentId == widget.channels[index].id) {
+                  return;
+                }
+                setState(() {
+                  _currentChannel = widget.channels[index];
+                  _currentId = widget.channels[index].id;
+                });
+                disposePlayer();
+                await initPlayer(widget.channels[index].url);
+              },
+            );
+          },
+        ),
       ),
     );
   }
