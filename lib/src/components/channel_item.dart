@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:public_iptv/src/models/stream_channel.dart';
 import 'package:public_iptv/src/pages/page_player.dart';
+import 'package:public_iptv/src/pages/page_player_alternative.dart';
 
 class ChannelItem extends StatelessWidget {
   final StreamChannel channel;
@@ -34,7 +35,7 @@ class ChannelItem extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => PagePlayer(
+                builder: (context) => PagePlayerAlternative(
                   channel: channel,
                   channels: channels,
                 ),

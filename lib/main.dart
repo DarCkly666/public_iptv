@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:public_iptv/src/pages/splash_screen.dart';
+import 'package:public_iptv/src/utils/constants.dart';
 import 'package:public_iptv/theme.dart';
 
 void main() {
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Abigail',
+      title: Constants.appName,
       theme: ThemeData(
         colorScheme: MaterialTheme.lightScheme(),
         useMaterial3: true,

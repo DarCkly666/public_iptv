@@ -39,6 +39,10 @@ dependencies:
   shared_preferences: 2.3.1
   keep_screen_on: 3.0.0
 
+  chewie: 1.8.3
+  video_player: 2.9.1
+  flick_video_player: 0.9.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
