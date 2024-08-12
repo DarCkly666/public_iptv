@@ -3,6 +3,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:keep_screen_on/keep_screen_on.dart';
+import 'package:public_iptv/src/components/loading_spinner.dart';
 import 'package:video_player/video_player.dart';
 import 'package:public_iptv/src/models/stream_channel.dart';
 
@@ -24,7 +25,6 @@ class _PagePlayerAlternativeState extends State<PagePlayerAlternative> {
   final ScrollController _scrollController = ScrollController();
 
   Future<void> initPlayer(String url) async {
-    _currentChannel = widget.channel;
     _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
     await _videoPlayerController.initialize();
     _chewieController = ChewieController(
@@ -51,20 +51,19 @@ class _PagePlayerAlternativeState extends State<PagePlayerAlternative> {
         );
       },
     );
-
-    _chewieController?.addListener(() {
+    _videoPlayerController.addListener(() {
       if (_chewieController?.isPlaying == true) {
         KeepScreenOn.turnOn();
       } else {
         KeepScreenOn.turnOff();
       }
     });
-
     setState(() {});
   }
 
   void disposePlayer() {
     _chewieController?.dispose();
+    _chewieController = null;
     _videoPlayerController.dispose();
   }
 
@@ -72,6 +71,11 @@ class _PagePlayerAlternativeState extends State<PagePlayerAlternative> {
   void initState() {
     super.initState();
     initPlayer(widget.channel.url);
+    _initCurrentChannel();
+  }
+
+  void _initCurrentChannel() {
+    _currentChannel = widget.channel;
     _currentId = widget.channel.id;
   }
 
@@ -181,10 +185,29 @@ class _PagePlayerAlternativeState extends State<PagePlayerAlternative> {
   AspectRatio _aspectRatio() {
     return AspectRatio(
       aspectRatio: 16 / 9,
-      child: _chewieController != null
+      child: _chewieController != null ||
+              _videoPlayerController.value.isInitialized
           ? Chewie(controller: _chewieController!)
-          : const Center(
-              child: CircularProgressIndicator(),
+          : Container(
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: FadeInImage(
+                      image: NetworkImage(
+                        _currentChannel?.logo ?? '',
+                      ),
+                      fit: BoxFit.cover,
+                      placeholder: const AssetImage('assets/images/logo.png'),
+                      imageErrorBuilder: (context, error, stackTrace) =>
+                          Image.asset(
+                        'assets/images/logo.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ).image,
+                  ),
+                  color: Colors.black),
+              child: const Center(
+                child: LoadingSpinner(),
+              ),
             ),
     );
   }
@@ -232,12 +255,12 @@ class _PagePlayerAlternativeState extends State<PagePlayerAlternative> {
               if (_currentId == widget.channels[index].id) {
                 return;
               }
-              disposePlayer();
-              initPlayer(widget.channels[index].url);
               setState(() {
                 _currentChannel = widget.channels[index];
                 _currentId = widget.channels[index].id;
               });
+              disposePlayer();
+              await initPlayer(widget.channels[index].url);
             },
           );
         },
