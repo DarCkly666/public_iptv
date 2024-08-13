@@ -3,6 +3,7 @@ import 'package:public_iptv/src/pages/page_categories.dart';
 import 'package:public_iptv/src/pages/page_channels.dart';
 import 'package:public_iptv/src/pages/page_countries.dart';
 import 'package:public_iptv/src/pages/page_languages.dart';
+import 'package:public_iptv/src/pages/page_settings.dart';
 import 'package:public_iptv/src/utils/constants.dart';
 
 class Root extends StatefulWidget {
@@ -21,6 +22,15 @@ class _RootState extends State<Root> {
   ];
   String _currentPage = 'countries';
 
+  void handleClick(String value, BuildContext context) {
+    switch (value) {
+      case 'Settings':
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const PageSettings()));
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,6 +40,22 @@ class _RootState extends State<Root> {
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0.0,
         forceMaterialTransparency: true,
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: (String value) => handleClick(value, context),
+            itemBuilder: (BuildContext context) {
+              return {'Settings'}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: ListTile(
+                    title: Text(choice),
+                    leading: const Icon(Icons.settings),
+                  ),
+                );
+              }).toList();
+            },
+          ),
+        ],
       ),
       body: IndexedStack(
         index: _pages.indexOf(_currentPage),
