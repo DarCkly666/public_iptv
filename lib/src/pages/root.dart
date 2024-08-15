@@ -71,10 +71,27 @@ class _RootState extends State<Root> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/logo.png'),
+                  fit: BoxFit.contain,
+                ),
               ),
-              child: const Text('Public IPTV'),
+              child: Center(
+                  child: Text(
+                'Public IPTV',
+                style: TextStyle(
+                  fontSize: 24,
+                  color: Theme.of(context).colorScheme.onSurface,
+                  shadows: [
+                    Shadow(
+                      color: Theme.of(context).colorScheme.surface,
+                      blurRadius: 4.0,
+                    ),
+                  ],
+                  fontWeight: FontWeight.bold,
+                ),
+              )),
             ),
             _drawerItem('Countries', Icons.public, 'countries'),
             _drawerItem('Categories', Icons.category, 'categories'),
