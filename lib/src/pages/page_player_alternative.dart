@@ -46,8 +46,11 @@ class _PagePlayerAlternativeState extends State<PagePlayerAlternative> {
       draggableProgressBar: false,
       isLive: true,
       errorBuilder: (context, error) {
-        return const Center(
-          child: Text('An error occurred'),
+        return Container(
+          color: Colors.black,
+          child: const Center(
+            child: Text('An error occurred'),
+          ),
         );
       },
     );
@@ -141,39 +144,17 @@ class _PagePlayerAlternativeState extends State<PagePlayerAlternative> {
                     style: const TextStyle(fontSize: 20),
                   ),
                 ),
-                SizedBox(
-                  child: InkWell(
-                    onTap: () {
+                ElevatedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.error,
+                    ),
+                    onPressed: () {
                       if (_chewieController?.isPlaying == true) {
                         _videoPlayerController
                             .seekTo(_videoPlayerController.value.duration);
                       }
                     },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8.0,
-                        vertical: 4.0,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                          color: Colors.red,
-                          width: 1,
-                        ),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'LIVE',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                    child: const Text('LIVE'))
               ],
             ),
           ),
@@ -185,32 +166,46 @@ class _PagePlayerAlternativeState extends State<PagePlayerAlternative> {
 
   AspectRatio _aspectRatio() {
     return AspectRatio(
-      aspectRatio: 16 / 9,
-      child: _chewieController != null ||
-              _videoPlayerController.value.isInitialized
-          ? Chewie(controller: _chewieController!)
-          : Container(
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: FadeInImage(
-                      image: NetworkImage(
-                        _currentChannel?.logo ?? '',
+        aspectRatio: 16 / 9,
+        child: _chewieController != null ||
+                _videoPlayerController.value.isInitialized
+            ? Chewie(controller: _chewieController!)
+            : SizedBox(
+                width: double.infinity,
+                height: double.infinity,
+                child: Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: FadeInImage(
+                            image: NetworkImage(
+                              _currentChannel?.logo ?? '',
+                            ),
+                            fit: BoxFit.cover,
+                            placeholder:
+                                const AssetImage('assets/images/logo.png'),
+                            imageErrorBuilder: (context, error, stackTrace) =>
+                                Image.asset(
+                              'assets/images/logo.png',
+                              fit: BoxFit.cover,
+                            ),
+                          ).image,
+                        ),
+                        color: Colors.black,
                       ),
-                      fit: BoxFit.cover,
-                      placeholder: const AssetImage('assets/images/logo.png'),
-                      imageErrorBuilder: (context, error, stackTrace) =>
-                          Image.asset(
-                        'assets/images/logo.png',
-                        fit: BoxFit.cover,
+                    ),
+                    Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      color: Colors.black.withOpacity(0.7),
+                      child: const Center(
+                        child: LoadingSpinner(),
                       ),
-                    ).image,
-                  ),
-                  color: Colors.black),
-              child: const Center(
-                child: LoadingSpinner(),
-              ),
-            ),
-    );
+                    )
+                  ],
+                ),
+              ));
   }
 
   _showChannels({controller}) {

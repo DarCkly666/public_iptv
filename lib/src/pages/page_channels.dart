@@ -45,34 +45,45 @@ class _PageChannelsState extends State<PageChannels> {
                   const SizedBox(width: 8.0),
                   IconButton.filledTonal(
                     icon: const Icon(Icons.search),
-                    onPressed: () async {
-                      final String channel = _channelController.text.trim();
-                      if (channel.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Please enter a channel name.'),
-                          ),
-                        );
-                        return;
-                      } else if (channel.length < 3) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content:
-                                Text('Please enter at least 3 characters.'),
-                          ),
-                        );
-                        return;
-                      } else {
-                        loading = true;
-                        setState(() {});
-                        final List<StreamChannel> channels =
-                            await ServiceChannel.getStreamChannelsByName(
-                                channel);
-                        _channels = channels;
-                        loading = false;
-                        setState(() {});
-                      }
-                    },
+                    onPressed: loading
+                        ? null
+                        : () async {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            final String channel =
+                                _channelController.text.trim();
+                            if (channel.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Please enter a channel name.'),
+                                ),
+                              );
+                              return;
+                            } else if (channel.length < 3) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Please enter at least 3 characters.'),
+                                ),
+                              );
+                              return;
+                            } else {
+                              setState(() {
+                                loading = true;
+                                _channels = [];
+                              });
+                              ServiceChannel.getStreamChannelsByName(channel)
+                                  .then((channels) {
+                                setState(() {
+                                  _channels = channels;
+                                  loading = false;
+                                });
+                              }).catchError((_) {
+                                setState(() {
+                                  loading = false;
+                                });
+                              });
+                            }
+                          },
                   ),
                 ],
               )),
